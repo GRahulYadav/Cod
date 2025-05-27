@@ -1,0 +1,889 @@
+import java.util.Scanner;
+
+public class GCD_Euclidean {
+    // Euclidean Algorithm for finding GCD
+    public static int gcd(int a, int b) {
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter first number: ");
+        int num1 = sc.nextInt();
+
+        System.out.print("Enter second number: ");
+        int num2 = sc.nextInt();
+
+        int result = gcd(num1, num2);
+        System.out.println("GCD of " + num1 + " and " + num2 + " is: " + result);
+
+        sc.close();
+    }
+}
+--------------------------------
+
+import java.util.*;
+
+public class PrimsAlgorithm {
+    static int V; // Number of vertices
+
+    // Function to find the vertex with minimum key value
+    int minKey(int key[], boolean mstSet[]) {
+        int min = Integer.MAX_VALUE, minIndex = -1;
+        for (int v = 0; v < V; v++)
+            if (!mstSet[v] && key[v] < min) {
+                min = key[v];
+                minIndex = v;
+            }
+        return minIndex;
+    }
+
+    // Function to print the constructed MST
+    void printMST(int parent[], int graph[][]) {
+        System.out.println("Edge \tWeight");
+        for (int i = 1; i < V; i++)
+            System.out.println(parent[i] + " - " + i + "\t" + graph[i][parent[i]]);
+    }
+
+    // Function to construct MST using Prim's Algorithm
+    void primMST(int graph[][]) {
+        V = graph.length;
+        int parent[] = new int[V]; // Array to store constructed MST
+        int key[] = new int[V]; // Key values to pick minimum weight edge
+        boolean mstSet[] = new boolean[V]; // To represent set of MST vertices
+
+        Arrays.fill(key, Integer.MAX_VALUE);
+        key[0] = 0; // Start from first vertex
+        parent[0] = -1;
+
+        for (int count = 0; count < V - 1; count++) {
+            int u = minKey(key, mstSet);
+            mstSet[u] = true;
+
+            for (int v = 0; v < V; v++)
+                if (graph[u][v] != 0 && !mstSet[v] && graph[u][v] < key[v]) {
+                    parent[v] = u;
+                    key[v] = graph[u][v];
+                }
+        }
+
+        printMST(parent, graph);
+    }
+
+    public static void main(String[] args) {
+        PrimsAlgorithm t = new PrimsAlgorithm();
+        int graph[][] = {
+            { 0, 2, 0, 6, 0 },
+            { 2, 0, 3, 8, 5 },
+            { 0, 3, 0, 0, 7 },
+            { 6, 8, 0, 0, 9 },
+            { 0, 5, 7, 9, 0 }
+        };
+
+        t.primMST(graph);
+    }
+}
+
+------------------------------------------------------------
+import java.util.Scanner;
+import java.util.Arrays;
+
+public class BinarySearchExample {
+
+    // Binary search function (iterative version)
+    public static int binarySearch(int[] arr, int key) {
+        int left = 0, right = arr.length - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+
+            if (arr[mid] == key)
+                return mid; // Element found
+
+            if (arr[mid] < key)
+                left = mid + 1;
+            else
+                right = mid - 1;
+        }
+
+        return -1; // Element not found
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter size of array: ");
+        int n = sc.nextInt();
+        int[] arr = new int[n];
+
+        System.out.println("Enter sorted array elements:");
+        for (int i = 0; i < n; i++)
+            arr[i] = sc.nextInt();
+
+        System.out.print("Enter element to search: ");
+        int key = sc.nextInt();
+
+        int result = binarySearch(arr, key);
+
+        if (result == -1)
+            System.out.println("Element not found.");
+        else
+            System.out.println("Element found at index: " + result);
+
+        sc.close();
+    }
+}
+
+------------------------------------------------------------------------------------------
+import java.util.*;
+
+public class BFSExample {
+
+    private int vertices; // Number of vertices
+    private LinkedList<Integer>[] adj; // Adjacency list
+
+    // Constructor
+    BFSExample(int v) {
+        vertices = v;
+        adj = new LinkedList[v];
+        for (int i = 0; i < v; ++i)
+            adj[i] = new LinkedList<>();
+    }
+
+    // Function to add an edge
+    void addEdge(int v, int w) {
+        adj[v].add(w);
+    }
+
+    // Function to perform BFS from a given source
+    void BFS(int start) {
+        boolean[] visited = new boolean[vertices];
+        Queue<Integer> queue = new LinkedList<>();
+
+        visited[start] = true;
+        queue.add(start);
+
+        System.out.print("BFS traversal starting from vertex " + start + ": ");
+
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            System.out.print(current + " ");
+
+            for (int neighbor : adj[current]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.add(neighbor);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        BFSExample graph = new BFSExample(6);
+
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(1, 4);
+        graph.addEdge(2, 4);
+        graph.addEdge(3, 5);
+        graph.addEdge(4, 5);
+
+        graph.BFS(0); // Start BFS from vertex 0
+    }
+}
+
+-----------------------------------------------------------------------------------------------
+public class QuickSortExample {
+
+    // Function to perform quick sort
+    public static void quickSort(int[] arr, int low, int high) {
+        if (low < high) {
+            int p = partition(arr, low, high);
+
+            // Recursively sort left and right sub-arrays
+            quickSort(arr, low, p - 1);
+            quickSort(arr, p + 1, high);
+        }
+    }
+
+    // Partition function
+    public static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high]; // Choose last element as pivot
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                // Swap arr[i] and arr[j]
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+
+        // Swap arr[i+1] and pivot
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+
+        return i + 1;
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        int[] arr = { 10, 7, 8, 9, 1, 5 };
+        quickSort(arr, 0, arr.length - 1);
+
+        System.out.println("Sorted array:");
+        for (int i : arr)
+            System.out.print(i + " ");
+    }
+}
+
+---------------------------------------------------------------------------------------
+
+import java.util.*;
+
+class Activity {
+    int start, end;
+
+    Activity(int s, int e) {
+        start = s;
+        end = e;
+    }
+}
+
+public class ActivitySelection {
+
+    // Function to perform activity selection
+    static void selectActivities(Activity[] activities) {
+        // Sort activities by end time
+        Arrays.sort(activities, Comparator.comparingInt(a -> a.end));
+
+        System.out.println("Selected Activities:");
+        int lastEndTime = -1;
+
+        for (Activity activity : activities) {
+            if (activity.start >= lastEndTime) {
+                System.out.println("Start: " + activity.start + ", End: " + activity.end);
+                lastEndTime = activity.end;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Activity[] activities = {
+            new Activity(1, 3),
+            new Activity(2, 4),
+            new Activity(0, 6),
+            new Activity(5, 7),
+            new Activity(8, 9),
+            new Activity(5, 9)
+        };
+
+        selectActivities(activities);
+    }
+}
+
+-------------------------------------------------------------------------------------------------------------
+
+public class MergeSortExample {
+
+    // Merge two sorted subarrays
+    public static void merge(int[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        // Create temporary arrays
+        int[] L = new int[n1];
+        int[] R = new int[n2];
+
+        // Copy data to temp arrays
+        for (int i = 0; i < n1; i++)
+            L[i] = arr[left + i];
+        for (int j = 0; j < n2; j++)
+            R[j] = arr[mid + 1 + j];
+
+        // Merge temp arrays
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (L[i] <= R[j])
+                arr[k++] = L[i++];
+            else
+                arr[k++] = R[j++];
+        }
+
+        // Copy remaining elements
+        while (i < n1)
+            arr[k++] = L[i++];
+        while (j < n2)
+            arr[k++] = R[j++];
+    }
+
+    // Main merge sort function
+    public static void mergeSort(int[] arr, int left, int right) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+
+            merge(arr, left, mid, right);
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] arr = { 38, 27, 43, 3, 9, 82, 10 };
+
+        mergeSort(arr, 0, arr.length - 1);
+
+        System.out.println("Sorted array:");
+        for (int i : arr)
+            System.out.print(i + " ");
+    }
+}
+
+-------------------------------------------
+public class NQueens {
+
+    final int N = 4;
+    int[][] board = new int[N][N];
+
+    // Check if queen can be placed at board[row][col]
+    boolean isSafe(int row, int col) {
+        // Check same column
+        for (int i = 0; i < row; i++)
+            if (board[i][col] == 1)
+                return false;
+
+        // Check upper-left diagonal
+        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--)
+            if (board[i][j] == 1)
+                return false;
+
+        // Check upper-right diagonal
+        for (int i = row - 1, j = col + 1; i >= 0 && j < N; i--, j++)
+            if (board[i][j] == 1)
+                return false;
+
+        return true;
+    }
+
+    // Recursive backtracking function
+    boolean solveNQueens(int row) {
+        if (row == N) {
+            printSolution();
+            return true;
+        }
+
+        boolean res = false;
+        for (int col = 0; col < N; col++) {
+            if (isSafe(row, col)) {
+                board[row][col] = 1;
+                res = solveNQueens(row + 1) || res;
+                board[row][col] = 0; // backtrack
+            }
+        }
+        return res;
+    }
+
+    // Print the board
+    void printSolution() {
+        System.out.println("Solution:");
+        for (int[] row : board) {
+            for (int cell : row)
+                System.out.print((cell == 1 ? "Q " : ". "));
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        NQueens queens = new NQueens();
+        if (!queens.solveNQueens(0))
+            System.out.println("No solution exists.");
+    }
+}
+
+-----------------------------------------------------------------------
+
+import java.util.Scanner;
+
+public class FibonacciDP {
+
+    // Function to compute nth Fibonacci using DP
+    public static int fibonacci(int n) {
+        if (n <= 1) return n;
+
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        dp[1] = 1;
+
+        // Bottom-up calculation
+        for (int i = 2; i <= n; i++)
+            dp[i] = dp[i - 1] + dp[i - 2];
+
+        return dp[n];
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter n (Fibonacci index): ");
+        int n = sc.nextInt();
+        System.out.println("Fibonacci number at index " + n + " is: " + fibonacci(n));
+        sc.close();
+    }
+}
+
+
+-----------------------------------------------------------------------------------
+
+import java.util.*;
+
+public class DFSExample {
+
+    private int vertices;
+    private LinkedList<Integer>[] adj;
+
+    // Constructor
+    DFSExample(int v) {
+        vertices = v;
+        adj = new LinkedList[v];
+
+        for (int i = 0; i < v; i++)
+            adj[i] = new LinkedList<>();
+    }
+
+    // Add an edge
+    void addEdge(int v, int w) {
+        adj[v].add(w);
+    }
+
+    // DFS utility function
+    void DFSUtil(int v, boolean[] visited) {
+        visited[v] = true;
+        System.out.print(v + " ");
+
+        for (int neighbor : adj[v]) {
+            if (!visited[neighbor])
+                DFSUtil(neighbor, visited);
+        }
+    }
+
+    // DFS traversal
+    void DFS(int start) {
+        boolean[] visited = new boolean[vertices];
+        System.out.print("DFS traversal starting from vertex " + start + ": ");
+        DFSUtil(start, visited);
+    }
+
+    public static void main(String[] args) {
+        DFSExample graph = new DFSExample(6);
+
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(1, 4);
+        graph.addEdge(2, 5);
+
+        graph.DFS(0);  // Start DFS from vertex 0
+    }
+}
+
+
+-----------------------------------------------------------------
+
+public class StrassenMatrix {
+
+    // Strassen's Matrix Multiplication for 2x2 matrices
+    public static int[][] strassenMultiply(int[][] A, int[][] B) {
+        int[][] C = new int[2][2];
+
+        int M1 = (A[0][0] + A[1][1]) * (B[0][0] + B[1][1]);
+        int M2 = (A[1][0] + A[1][1]) * B[0][0];
+        int M3 = A[0][0] * (B[0][1] - B[1][1]);
+        int M4 = A[1][1] * (B[1][0] - B[0][0]);
+        int M5 = (A[0][0] + A[0][1]) * B[1][1];
+        int M6 = (A[1][0] - A[0][0]) * (B[0][0] + B[0][1]);
+        int M7 = (A[0][1] - A[1][1]) * (B[1][0] + B[1][1]);
+
+        C[0][0] = M1 + M4 - M5 + M7;
+        C[0][1] = M3 + M5;
+        C[1][0] = M2 + M4;
+        C[1][1] = M1 - M2 + M3 + M6;
+
+        return C;
+    }
+
+    public static void main(String[] args) {
+        int[][] A = { {1, 2}, {3, 4} };
+        int[][] B = { {5, 6}, {7, 8} };
+
+        int[][] result = strassenMultiply(A, B);
+
+        System.out.println("Product of matrices:");
+        for (int[] row : result) {
+            for (int val : row)
+                System.out.print(val + " ");
+            System.out.println();
+        }
+    }
+}
+
+-----------------------------------------------------------------------------
+
+import java.util.*;
+
+class Item {
+    int weight, value;
+
+    Item(int w, int v) {
+        weight = w;
+        value = v;
+    }
+}
+
+class Node {
+    int level, profit, bound, weight;
+}
+
+public class KnapsackBranchBound {
+
+    // Function to calculate upper bound (greedy estimate)
+    static int bound(Node u, int n, int W, Item[] arr) {
+        if (u.weight >= W) return 0;
+
+        int profitBound = u.profit;
+        int j = u.level + 1;
+        int totweight = u.weight;
+
+        while (j < n && totweight + arr[j].weight <= W) {
+            totweight += arr[j].weight;
+            profitBound += arr[j].value;
+            j++;
+        }
+
+        if (j < n)
+            profitBound += (W - totweight) * arr[j].value / arr[j].weight;
+
+        return profitBound;
+    }
+
+    static int knapsack(Item[] arr, int n, int W) {
+        Arrays.sort(arr, (a, b) -> b.value * a.weight - a.value * b.weight); // Sort by value/weight
+
+        Queue<Node> Q = new LinkedList<>();
+        Node u = new Node(), v = new Node();
+
+        u.level = -1;
+        u.profit = u.weight = 0;
+        Q.add(u);
+
+        int maxProfit = 0;
+
+        while (!Q.isEmpty()) {
+            u = Q.poll();
+
+            if (u.level == n - 1) continue;
+
+            v = new Node();
+            v.level = u.level + 1;
+
+            // Include current item
+            v.weight = u.weight + arr[v.level].weight;
+            v.profit = u.profit + arr[v.level].value;
+
+            if (v.weight <= W && v.profit > maxProfit)
+                maxProfit = v.profit;
+
+            v.bound = bound(v, n, W, arr);
+            if (v.bound > maxProfit)
+                Q.add(v);
+
+            // Exclude current item
+            v = new Node();
+            v.level = u.level + 1;
+            v.weight = u.weight;
+            v.profit = u.profit;
+            v.bound = bound(v, n, W, arr);
+
+            if (v.bound > maxProfit)
+                Q.add(v);
+        }
+
+        return maxProfit;
+    }
+
+    public static void main(String[] args) {
+        Item[] arr = {
+            new Item(2, 40),
+            new Item(3, 50),
+            new Item(4, 70),
+            new Item(5, 80)
+        };
+
+        int W = 5;
+        int n = arr.length;
+
+        System.out.println("Maximum Profit = " + knapsack(arr, n, W));
+    }
+}
+
+----------------------------------------------------------------------------
+
+class Item {
+    int weight, value;
+
+    Item(int w, int v) {
+        weight = w;
+        value = v;
+    }
+}
+
+public class SimpleKnapsackBnB {
+
+    static int maxProfit = 0;
+
+    // Function to solve 0/1 Knapsack using Branch and Bound
+    static void knapsack(Item[] items, int index, int currentWeight, int currentProfit, int capacity) {
+        // Base case: out of items or capacity
+        if (index == items.length) {
+            if (currentProfit > maxProfit)
+                maxProfit = currentProfit;
+            return;
+        }
+
+        // Branch 1: Include current item if it doesn't exceed capacity
+        if (currentWeight + items[index].weight <= capacity) {
+            knapsack(items, index + 1,
+                    currentWeight + items[index].weight,
+                    currentProfit + items[index].value,
+                    capacity);
+        }
+
+        // Branch 2: Exclude current item
+        knapsack(items, index + 1, currentWeight, currentProfit, capacity);
+    }
+
+    public static void main(String[] args) {
+        // Define items: new Item(weight, value)
+        Item[] items = {
+            new Item(2, 10),
+            new Item(3, 20),
+            new Item(4, 30)
+        };
+
+        int capacity = 5;
+
+        // Start Branch and Bound recursion
+        knapsack(items, 0, 0, 0, capacity);
+
+        System.out.println("Maximum Profit = " + maxProfit);
+    }
+}
+
+
+----------------------------------------------------------------
+
+import java.util.*;
+
+class Edge {
+    int vertex, weight;
+    Edge(int v, int w) {
+        vertex = v;
+        weight = w;
+    }
+}
+
+public class PrimsUsingPQ {
+
+    static void prims(int V, List<List<Edge>> adj) {
+        boolean[] visited = new boolean[V];
+        PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingInt(e -> e.weight));
+        int totalWeight = 0;
+
+        pq.add(new Edge(0, 0)); // Start from vertex 0
+
+        while (!pq.isEmpty()) {
+            Edge curr = pq.poll();
+            int u = curr.vertex;
+
+            if (visited[u]) continue;
+
+            visited[u] = true;
+            totalWeight += curr.weight;
+
+            for (Edge neighbor : adj.get(u)) {
+                if (!visited[neighbor.vertex])
+                    pq.add(neighbor);
+            }
+        }
+
+        System.out.println("Minimum Spanning Tree Total Weight: " + totalWeight);
+    }
+
+    public static void main(String[] args) {
+        int V = 5;
+
+        List<List<Edge>> adj = new ArrayList<>();
+        for (int i = 0; i < V; i++)
+            adj.add(new ArrayList<>());
+
+        // Undirected graph: add both directions
+        adj.get(0).add(new Edge(1, 2));
+        adj.get(1).add(new Edge(0, 2));
+
+        adj.get(0).add(new Edge(3, 6));
+        adj.get(3).add(new Edge(0, 6));
+
+        adj.get(1).add(new Edge(2, 3));
+        adj.get(2).add(new Edge(1, 3));
+
+        adj.get(1).add(new Edge(3, 8));
+        adj.get(3).add(new Edge(1, 8));
+
+        adj.get(1).add(new Edge(4, 5));
+        adj.get(4).add(new Edge(1, 5));
+
+        adj.get(2).add(new Edge(4, 7));
+        adj.get(4).add(new Edge(2, 7));
+
+        prims(V, adj);
+    }
+}
+
+
+--------------------------------------------------------------------
+
+import java.util.*;
+
+public class UnweightedGraph {
+    public static void main(String[] args) {
+        int V = 5; // Number of vertices
+
+        // Initialize adjacency list
+        List<List<Integer>> adj = new ArrayList<>();
+
+        for (int i = 0; i < V; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        // Add edges (undirected graph)
+        addEdge(adj, 0, 1);
+        addEdge(adj, 0, 4);
+        addEdge(adj, 1, 2);
+        addEdge(adj, 1, 3);
+        addEdge(adj, 1, 4);
+        addEdge(adj, 2, 3);
+        addEdge(adj, 3, 4);
+
+        // Print adjacency list
+        for (int i = 0; i < V; i++) {
+            System.out.print(i + " -> ");
+            for (int node : adj.get(i)) {
+                System.out.print(node + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    static void addEdge(List<List<Integer>> adj, int u, int v) {
+        adj.get(u).add(v);
+        adj.get(v).add(u); // Omit for directed graph
+    }
+}
+
+-----------------------------------------------------------------------------
+
+import java.util.*;
+
+public class WeightedGraph {
+    public static void main(String[] args) {
+        int V = 4;
+        List<List<Edge>> adj = new ArrayList<>();
+
+        for (int i = 0; i < V; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        // Add weighted edges
+        addEdge(adj, 0, 1, 10);
+        addEdge(adj, 0, 2, 6);
+        addEdge(adj, 1, 2, 5);
+        addEdge(adj, 1, 3, 15);
+
+        // Print adjacency list
+        for (int i = 0; i < V; i++) {
+            System.out.print(i + " -> ");
+            for (Edge e : adj.get(i)) {
+                System.out.print("(" + e.vertex + ", " + e.weight + ") ");
+            }
+            System.out.println();
+        }
+    }
+
+    static void addEdge(List<List<Edge>> adj, int u, int v, int w) {
+        adj.get(u).add(new Edge(v, w));
+        adj.get(v).add(new Edge(u, w)); // Omit for directed graph
+    }
+}
+
+-----------------------------------------------
+
+import java.util.*;
+
+class Node {
+    int value;
+    int steps;
+
+    Node(int value, int steps) {
+        this.value = value;
+        this.steps = steps;
+    }
+}
+
+public class BranchAndBoundExample {
+
+    static int minSteps(int target) {
+        Queue<Node> queue = new LinkedList<>();
+        Set<Integer> visited = new HashSet<>();
+
+        queue.add(new Node(1, 0)); // Start from 1
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+
+            // Goal reached
+            if (current.value == target)
+                return current.steps;
+
+            if (visited.contains(current.value)) continue;
+            visited.add(current.value);
+
+            // Branching: try multiply by 2 and add 1
+            if (current.value * 2 <= target + 1)
+                queue.add(new Node(current.value * 2, current.steps + 1));
+
+            if (current.value + 1 <= target + 1)
+                queue.add(new Node(current.value + 1, current.steps + 1));
+        }
+
+        return -1; // Not reachable
+    }
+
+    public static void main(String[] args) {
+        int target = 10;
+        int result = minSteps(target);
+        System.out.println("Minimum steps to reach " + target + " from 1: " + result);
+    }
+}
+
+----------------------------------------------------------------------------------

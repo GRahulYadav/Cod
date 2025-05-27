@@ -1,0 +1,47 @@
+import java.util.*;
+
+class Node {
+    int value;
+    int steps;
+
+    Node(int value, int steps) {
+        this.value = value;
+        this.steps = steps;
+    }
+}
+
+public class BranchAndBoundExample {
+
+    static int minSteps(int target) {
+        Queue<Node> queue = new LinkedList<>();
+        Set<Integer> visited = new HashSet<>();
+
+        queue.add(new Node(1, 0)); // Start from 1
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+
+            // Goal reached
+            if (current.value == target)
+                return current.steps;
+
+            if (visited.contains(current.value)) continue;
+            visited.add(current.value);
+
+            // Branching: try multiply by 2 and add 1
+            if (current.value * 2 <= target + 1)
+                queue.add(new Node(current.value * 2, current.steps + 1));
+
+            if (current.value + 1 <= target + 1)
+                queue.add(new Node(current.value + 1, current.steps + 1));
+        }
+
+        return -1; // Not reachable
+    }
+
+    public static void main(String[] args) {
+        int target = 10;
+        int result = minSteps(target);
+        System.out.println("Minimum steps to reach " + target + " from 1: " + result);
+    }
+}
